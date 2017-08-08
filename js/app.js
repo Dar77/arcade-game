@@ -3,7 +3,7 @@ var Enemy = function(speed, imageSprite) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
     this.x = -50; //starting position
-    this.y = 70; //lane;
+    this.y = 70; // was 70 - lane;
     this.charSpeed = speed; //speed passed in by function parameter
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
@@ -23,7 +23,7 @@ Enemy.prototype.update = function(dt) {
     if (this.x >= 510) { // when enemies reach the far right of canvas, send them again
         this.x = -50 * sendTheBugs; // to send enemies with random spacing
         this.x += this.charSpeed * dt;
-        this.y = 70 * lane; // to send enemies from a random lane
+        this.y = 70 * lane; // was 70 - to send enemies from a random lane
     }
 
 };
@@ -37,37 +37,49 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-var Player = function(heroX, heroY, imageSprite) {
+var Player = function(x, y, imageSprite) {
 
     // define variables for player
-    this.x = heroX;
-    this.y = heroY;
+    this.x = x;
+    this.y = y;
     this.currentScore = 0;
     this.currentLives = 5;
     this.won = false;
     this.collision = false;
+    this.grab = false;
     this.width = 40;
     this.height = 40;
     this.sprite = imageSprite; // image used must be (listed) and loaded in engine.js
 };
 
-Player.prototype.update = function(dt) {
+Player.prototype.update = function() {
 
     this.x = this.x;
     this.y = this.y;
 
-for (i = 0; i < allEnemies.length; i++) { // detect collision
-    var myPlayer = {x: this.x, y: this.y, width: this.width, height: this.height}
-    var bug = {x: allEnemies[i].x, y: allEnemies[i].y, width: 101, height: 60}
-
-    if (myPlayer.x < bug.x + bug.width &&
-        myPlayer.x + myPlayer.width > bug.x &&
-        myPlayer.y < bug.y + bug.height &&
-        myPlayer.height + myPlayer.y > bug.y) {
+for (i = 0; i < allEnemies.length; i++) { // detect collision with enemies
+    var myPlayer = {x: this.x, y: this.y, width: this.width, height: this.height};
+    var bug = {x: allEnemies[i].x, y: allEnemies[i].y, width: 70, height: 60};
+    var checkCollision = myPlayer.x < bug.x + bug.width && myPlayer.x + myPlayer.width > bug.x &&
+                         myPlayer.y < bug.y + bug.height && myPlayer.height + myPlayer.y > bug.y;
+    if (checkCollision) {
         player.reset();
         this.collision = true; // change value of collision variable
-        this.currentScore--;
-        this.currentLives--;
+        this.currentScore--; // reduce score by 1 after collision
+        this.currentLives--; // reduce lives by 1 after a collision
+        }
+    }
+
+for (i = 0; i < allItems.length; i++) { // detect collision with pick up items
+    var item = {x: allItems[i].x, y: allItems[i].y, width: 50, height: 60};
+    var grab = function() {allItems[i].x = 520;}; // grab pick up by moving its position off screen
+    var checkGrab = myPlayer.x < item.x + item.width && myPlayer.x + myPlayer.width > item.x &&
+                    myPlayer.y < item.y + item.height && myPlayer.height + myPlayer.y > item.y;
+    if (checkGrab) {
+            grab();
+            this.grab = true;
+            this.currentLives += allItems[i].lifeIncrease; // add items life value to player lives total
+            this.currentScore += allItems[i].scoreIncrease; // add items point value to score
         }
     }
 };
@@ -79,36 +91,26 @@ Player.prototype.render = function() {
     player.score();
     player.lives();
 
-    var screenMessage = function(text) { // generate screen message function
-        var canvas = document.querySelector('canvas');
-        ctx.font = '36pt impact';
-        ctx.textAlign = 'center';
-
-        ctx.fillStyle = "white";
-        ctx.fillText(text, canvas.width/2, 300);
-
-        ctx.strokeStyle = "black";
-        ctx.lineWidth = 3;
-        ctx.strokeText(text, canvas.width/2, 300);
-    };
-
    if (this.won === true && this.x === 202 && this.y === 400) { // if player has won game and is in reset position display message
         var msg = 'WIN!';
-        screenMessage(msg);
+        player.screenMessage(msg, 300);
     } else if (this.collision === true && this.x === 202 && this.y === 400) { // if player has been hit by enemy and is in reset position display message
-        msg = 'GOTCHA!'
-        screenMessage(msg);
+        msg = 'GOT YOU!'
+        player.screenMessage(msg, 300);
+    } else if (this.grab === true && this.y <= 310 && this.y > -10) { // if player is on the road or sea but not the grass
+        msg = 'PICK UP!';
+        player.screenMessage(msg, 300);
     } else {
-        this.won = false; // resets value of won or collision back to false after win or collision
+        this.won = false; // resets value of won, collision or grab back to false after win, collision or grab
         this.collision = false;
+        this.grab = false;
     }
-
 };
 
 Player.prototype.handleInput = function(input) {
 
-    var stepX = 101; // player footstep x axis
-    var stepY = 85; // player footstep y axis
+    var stepX = 101; // player movement x axis
+    var stepY = 85; // player movement y axis
 
     switch (input) { // handle keyboard input
 
@@ -137,7 +139,7 @@ Player.prototype.handleInput = function(input) {
             this.y = this.y - stepY;
             if (this.y < -10) {
                 this.y = -10;
-                this.currentScore++;
+                this.currentScore++; // win - player has crossed the road - 1 point
                 this.won = true; // change value of won variable
                 player.reset();
             }
@@ -146,11 +148,25 @@ Player.prototype.handleInput = function(input) {
 };
 
 Player.prototype.reset = function() { // reset x and y to start position if player wins game or collision occurs
+
     this.x = 202;
     this.y = 400;
 };
 
-Player.prototype.score = function() {
+Player.prototype.screenMessage = function(text, y) { // generate screen messages
+
+    var canvas = document.querySelector('canvas');
+    ctx.font = '36pt impact';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = "white";
+    ctx.fillText(text, canvas.width/2, y);
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 3;
+    ctx.strokeText(text, canvas.width/2, y);
+};
+
+Player.prototype.score = function() { // generates current score
+
     var align = 'left';
     var text = 'Score: ';
     var xAxis = 50;
@@ -160,32 +176,40 @@ Player.prototype.score = function() {
         this.currentScore = 0; // prevents score counting down below 0
         scored = this.currentScore;
     }
-
-    player.gameData(text, scored, align, xAxis);
+    player.gameData(text, scored, align, xAxis); // send score to game data
 };
 
-Player.prototype.lives = function() {
-    var align = 'right';
-    var text = 'Lives: ';
-    var xAxis = 450;
+Player.prototype.lives = function() { // handles players lives data and 'game over' screen
+
+    align = 'right';
+    text = 'Lives: ';
+    xAxis = 450;
     if (this.currentLives >= 1) {
         var lives = this.currentLives;
     } else {
-        this.currentLives <= 0; // prevents score counting down below 0
+        this.currentLives = 0; // prevents lives counting down below 0
         lives = '';
-        text = 'GAME OVER!'; //TODO add game over function, restart game
-        var canvas = document.querySelector('canvas');
+        text = 'click to replay';
+
+        var canvas = document.querySelector('canvas'); // paint canvas black on game over
         ctx.fillStyle = 'black';
         ctx.fillRect(0,0,canvas.width,canvas.height);
-        //document.location.reload(); // reloads page
+
+        msg = 'GAME OVER!'
+        player.screenMessage(msg, 400); // game over message
+
+        var newGame = function() {  // reload page
+            document.location.reload();
+        };
+        canvas.addEventListener('click', newGame); // for new game click screen
     }
 
     player.gameData(text, lives, align, xAxis);
 };
 
-Player.prototype.gameData = function(text, type, align, xAxis) { // shared function prints score and lives data to canvas
+Player.prototype.gameData = function(text, type, align, xAxis) { // prints score and lives data to canvas
 
-    ctx.font = "24pt impact";
+    ctx.font = '24pt impact';
     ctx.textAlign = align;
 
     ctx.fillStyle = "white";
@@ -196,16 +220,56 @@ Player.prototype.gameData = function(text, type, align, xAxis) { // shared funct
     ctx.strokeText(text + type, xAxis, 100);
 };
 
+// Item pick up class
+var Item = function(points, life, speed, imageSprite) {
+
+    this.y = 700;
+    this.x = -50;
+    this.itemSpeed = speed;
+    this.scoreIncrease = points;
+    this.lifeIncrease = life;
+    this.sprite = imageSprite;
+};
+
+Item.prototype.update = function(dt) {
+
+    var sendItems = Math.floor((Math.random() * 4) + 1);
+    lane = Math.floor((Math.random() * 3) + 1);
+    this.x += this.itemSpeed * dt; // send the pick up items across the screen
+    if (this.x >= 510) { // send them all again
+        this.x = -500 * sendItems;
+        this.x += this.itemSpeed * dt;
+        this.y = 70 * lane;
+    }
+};
+
+Item.prototype.render = function() {
+
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
-var enemyOne = new Enemy(100, 'images/enemy-bug.png');
-var enemyTwo = new Enemy(150, 'images/enemy-bug.png'); // 200
-var enemyThree = new Enemy(200, 'images/enemy-bug.png'); // 300
-var enemyFour = new Enemy(400, 'images/enemy-bug.png'); // 600
+var enemyOne = new Enemy(100, 'images/enemy-bug.png'); // parameters: speed, image
+var enemyTwo = new Enemy(150, 'images/enemy-bug.png');
+var enemyThree = new Enemy(200, 'images/enemy-bug.png');
+var enemyFour = new Enemy(400, 'images/orc-racer.png');
 var allEnemies = [enemyOne, enemyTwo, enemyThree, enemyFour];
 
 // Place the player object in a variable called player
-var player = new Player(202, 400, 'images/char-horn-girl.png');
+var player = new Player(202, 400, 'images/char-horn-girl.png'); // parameters: x-position, y-position, image
+
+// Item objects, pick ups
+var blueGem = new Item(1, 0, 90, 'images/gem-blue.png'); // parameters: points, life, speed, image
+var greenGem = new Item(2, 0, 100, 'images/gem-green.png');
+var orangeGem = new Item(3, 0, 110, 'images/gem-orange.png');
+var key = new Item(4, 0, 120, 'images/Key.png');
+var star = new Item(5, 0, 200, 'images/Star.png');
+var heart = new Item(0, 1, 200, 'images/heart.png');
+var allItems = [blueGem, greenGem, orangeGem, key, star, heart];
+
+// Rock object, obstacle
+//var rock = new Rock('Rock.png');
 
 
 // This listens for key presses and sends the keys to your

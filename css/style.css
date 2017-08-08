@@ -1,3 +1,35 @@
+@font-face { /* not used yet */
+    font-family: "mulilight";
+    src: url(../fonts/muli-light-webfont.woff2) format("woff2"),
+         url(../fonts/muli-light-webfont.woff) format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
     text-align: center;
+    background: black;
+    font-size: 16px;
+}
+
+canvas {
+	border: 1px solid #2196f3;
+    border-radius: 20px;
+    padding: 0 51px 51px;
+}
+
+h1 {
+	font: 5em/1.5em "Baloo Chettan", cursive;
+	margin: 0;
+	color: #2196f3;
+	border-bottom: 1px solid blue;
+}
+
+h3 {
+	font: 1.5em/1.5em "Press Start 2P", cursive;
+	color: white;
+}
+
+p {
+	font: 1em/1.5em "mulilight", monospace; /* not used yet */
 }
