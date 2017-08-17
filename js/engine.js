@@ -21,13 +21,14 @@ var Engine = (function(global) {
      */
     var doc = global.document,
         win = global.window,
+        gameScreen = doc.getElementById('game-screen'),
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    canvas.width = 505;
-    canvas.height = 586; // originally 606
-    doc.body.appendChild(canvas);
+    canvas.width = 707;
+    canvas.height = 656;
+    gameScreen.appendChild(canvas); // add canvas to game-screen div
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -94,11 +95,12 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-        // =================================================================================================================
-        allItems.forEach(function(item) { // trying this code to work with item pick up classes
+        allItems.forEach(function(item) {
             item.update(dt);
         });
-        // =================================================================================================================
+        allObstacles.forEach(function(obstacle) {
+            obstacle.update();
+        });
         player.update();
     }
 
@@ -114,14 +116,15 @@ var Engine = (function(global) {
          */
         var rowImages = [
                 'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
+                'images/grass-block.png',   // Top row of grass
+                'images/stone-block.png',   // Row 1 of 4 of stone
+                'images/stone-block.png',   // Row 2 of 4 of stone
+                'images/stone-block.png',   // Row 3 of 4 of stone
+                'images/stone-block.png',   // Row 4 of 4 of stone
+                'images/grass-block.png'    // Bottom row is grass
             ],
-            numRows = 6,
-            numCols = 5,
+            numRows = 7,
+            numCols = 7,
             row, col;
 
         /* Loop through the number of rows and columns we've defined above
@@ -137,6 +140,7 @@ var Engine = (function(global) {
                  * so that we get the benefits of caching these images, since
                  * we're using them over and over.
                  */
+
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
@@ -152,15 +156,15 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
+        allObstacles.forEach(function(obstacle) { // Rock and Hole obstacle classes
+            obstacle.render();
+        });
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
-        // =================================================================================================================
-        allItems.forEach(function(item) { // trying this code to work with item pick up classes
+        allItems.forEach(function(item) { // Item pick up classes
             item.render();
         });
-
-        // =================================================================================================================
         player.render();
     }
 
@@ -180,6 +184,8 @@ var Engine = (function(global) {
         'images/stone-block.png',
         'images/water-block.png',
         'images/grass-block.png',
+        'images/rock.png',
+        'images/hole.png',
         'images/enemy-bug.png',
         'images/orc-racer.png',
         'images/char-horn-girl.png',
@@ -187,8 +193,8 @@ var Engine = (function(global) {
         'images/gem-green.png',
         'images/gem-orange.png',
         'images/heart.png',
-        'images/Key.png',
-        'images/Star.png'
+        'images/key.png',
+        'images/star.png'
     ]);
 
     Resources.onReady(init);

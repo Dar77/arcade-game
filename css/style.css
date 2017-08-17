@@ -1,7 +1,7 @@
-@font-face { /* not used yet */
-    font-family: "mulilight";
-    src: url(../fonts/muli-light-webfont.woff2) format("woff2"),
-         url(../fonts/muli-light-webfont.woff) format("woff");
+@font-face {
+    font-family: "source_code_proregular";
+    src: url(../fonts/sourcecodepro-regular-webfont.woff2) format("woff2"),
+    url(../fonts/sourcecodepro-regular-webfont.woff) format("woff");
     font-weight: normal;
     font-style: normal;
 }
@@ -10,6 +10,7 @@ body {
     text-align: center;
     background: black;
     font-size: 16px;
+    position: relative;
 }
 
 canvas {
@@ -30,6 +31,110 @@ h3 {
 	color: white;
 }
 
+h4 {
+	font: 1.3em/1.5em "Press Start 2P", cursive;
+	color: #71b1fb;
+}
+
 p {
-	font: 1em/1.5em "mulilight", monospace; /* not used yet */
+	font: 1em/1.5em "source_code_proregular", monospace;
+	color: #71b1fb;
+	max-width: 380px;
+    text-align: left;
+    margin: 0 auto;
+}
+
+li {
+	font: 1em/1.5em "source_code_proregular", monospace;
+	color: #71b1fb;
+	list-style-type: none;
+	padding: 0 20px 0 20px
+}
+
+span {
+	display: block;
+}
+
+.game-info-1,
+.game-info-2,
+.game-info-3,
+.game-info-4,
+.game-info-5 {  /* game info screen styles*/
+	background: black;
+	border: 1px solid #2196f3;
+    border-radius: 20px;
+    padding: 0 51px;
+    width: 708px;
+    height: 708px;
+    position: absolute;
+    top: 205px;
+    left: 50%;
+    margin-left: -406px;
+}
+
+.game-info-1 {
+	z-index: 1000;
+}
+
+.game-info-2 {
+	z-index: 600;
+}
+
+.game-info-3 {
+	z-index: 300;
+}
+
+.game-info-4,
+.game-info-5 {
+	display: none;
+}
+
+.show {
+	z-index: 2000; /* make game over screen appaer on top */
+	background: black;
+	border: 1px solid #2196f3;
+    border-radius: 20px;
+    padding: 0 51px;
+    width: 708px;
+    height: 708px;
+    position: absolute;
+    top: 205px;
+    left: 50%;
+    margin-left: -406px;
+}
+
+.info-headings {
+	font: 1.5em/1.5em "Press Start 2P", cursive;
+	color: #aed0f7;
+}
+
+.mrg-top {
+	margin-top: 30px;
+}
+
+.pick-ups {
+	display: flex;
+	flex-wrap: wrap;
+	max-width: 500px;
+    margin: 0 auto;
+}
+
+.info-img {
+	padding-top: 60px;
+	display: block;
+	margin: 0 auto;
+}
+
+.button {
+	font: 1.2em/1.5em "Press Start 2P", cursive;
+	color: white;
+	border: 1px solid blue;
+	border-radius: 10px;
+	background: black;
+	padding: 0.5em;
+	cursor: pointer;
+}
+
+.button:hover {
+	background: #040432;
 }

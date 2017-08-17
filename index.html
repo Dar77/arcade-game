@@ -1,16 +1,66 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Frogger Clone Arcade Game Project</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-	<h1>Frogger</h1>
-	<h3>Arcade Game Clone</h3>
-    <script src="js/resources.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/engine.js"></script>
-    <link href="https://fonts.googleapis.com/css?family=Baloo+Chettan|Press+Start+2P" rel="stylesheet">
-</body>
+<!doctype html>
+<html lang="en">
+	<head>
+	    <meta charset="utf-8">
+	    <title>Frogger Clone Arcade Game Project</title>
+	    <meta name="description" content="This game is loosley based on the classic 1981 video game Frogger. In which the players frog character negotiated roads filled with hostile vehicles to reach safety at the top of the screen. This game is built with the canvas api.">
+	    <!--[if lt IE 9]>
+	    <script src="excanvas.js"></script>
+	    <![endif]-->
+	    <link href="https://fonts.googleapis.com/css?family=Baloo+Chettan|Press+Start+2P" rel="stylesheet">
+	    <link rel="stylesheet" href="css/style.css">
+	</head>
+	<body>
+		<h1>Frogger</h1>
+		<h3>Arcade Game Clone</h3>
+		<!-- below: div for canvas-->
+		<div id="game-screen" class="game-screen"></div>
+		<!-- below: info screen instructions-->
+		<div class="game-info-1">
+			<img src="images/char-horn-girl.png" alt="player character image">
+			<h3 class="info-headings">Instructions</h3>
+			<p>Manoeuvre your player safely across the road and to the water at the top of the screen. Take care to avoid enemy bugs, holes and troll racers along the way! To win your score must reach 50 points and you must cross the road and reach the water 15 times or more. Good luck!</p>
+			<h3 class="info-headings mrg-top">Game Controls</h3>
+			<p>Use keyboard arrow keys to move player.</p>
+			<button class="button mrg-top" id="next" type="button">Next</button>
+		</div>
+		<!-- below: info screen pick ups info-->
+		<div class="game-info-2">
+			<h3 class="info-headings mrg-top">Pick Ups</h3>
+			<ul class="pick-ups">
+				<li><img src="images/gem-blue.png" alt="blue gem pick up"><span>1 point</span></li>
+				<li><img src="images/gem-green.png" alt="green gem pick up"><span>2 points</span></li>
+				<li><img src="images/gem-orange.png" alt="orange gem pick up"><span>3 points</span></li>
+				<li><img src="images/key.png" alt="key pick up"><span>4 points</span></li>
+				<li><img src="images/star.png" alt="star pick up"><span>5 points</span></li>
+				<li><img src="images/heart.png" alt="heart pick up"><span>1 new life</span></li>
+			</ul>
+			<button class="button mrg-top" id="next-2" type="button">Next</button>
+		</div>
+		<!-- below: start game info screen-->
+		<div class="game-info-3">
+			<img src="images/char-horn-girl.png" alt="player character image" class="info-img">
+			<button class="button mrg-top" id="start-game" type="button">Play Game</button>
+		</div>
+		<!-- below: 'game over' screen-->
+		<div class="game-info-4">
+			<img src="images/orc-racer.png" alt="orc-racer character image" class="info-img">
+			<h3 class="info-headings mrg-top">Game Over</h3>
+			<h4>Lives: 0</h4>
+			<button class="button mrg-top" id="replayGame" type="button">Replay</button>
+		</div>
+		<!-- below: 'won game' screen-->
+		<div class="game-info-5">
+			<img src="images/char-horn-girl.png" alt="player character image" class="info-img">
+			<h3 class="info-headings mrg-top">You've WON GAME!</h3>
+			<h4>Score: 50+</h4>
+			<h4>Road Cross: 15+</h4>
+			<button class="button mrg-top" id="newGame" type="button">Replay</button>
+		</div>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	    <script src="js/resources.js"></script>
+	    <script src="js/app.js"></script>
+	    <script src="js/engine.js"></script>
+	    <script src="js/game-screen.js"></script>
+	</body>
 </html>
