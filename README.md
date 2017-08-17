@@ -1,4 +1,4 @@
-###Frontend Nanodegree Arcade Game Project
+### Frontend Nanodegree Project
 ___
 
 # Classic Arcade Game Clone
