@@ -19,7 +19,6 @@ Enemy.prototype.update = function(dt) {
         this.x += this.charSpeed * dt;
         this.y = (77 * lane) + 154; // to send enemies from a random lane, first lane location at 154 y-axis
     }
-
 };
 
 // Draw the enemy on the screen, required method for game
@@ -180,7 +179,7 @@ Player.prototype.handleInput = function(input) {
                 }
             }
             break;
-        }
+    }
 };
 
 Player.prototype.reset = function() { // reset x and y to start position if player falls in hole or collision occurs
@@ -316,7 +315,7 @@ var Rock = function(x, y) {
 
     this.x = x;
     this.y = y;
-    this.sprite = 'images/rock.png';
+    this.sprite = 'images/rock-1.png';
 };
 
 Rock.prototype.update = function() {
@@ -359,7 +358,7 @@ var greenGem = new Item(2, 0, 100, 'images/gem-green.png');
 var orangeGem = new Item(3, 0, 110, 'images/gem-orange.png');
 var key = new Item(4, 0, 120, 'images/key.png');
 var star = new Item(5, 0, 200, 'images/star.png');
-var heart = new Item(0, 1, 200, 'images/heart.png');
+var heart = new Item(0, 1, 200, 'images/heart-1.png');
 var allItems = [blueGem, greenGem, orangeGem, key, star, heart];
 
 // Rock objects, obstacle

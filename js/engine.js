@@ -184,7 +184,7 @@ var Engine = (function(global) {
         'images/stone-block.png',
         'images/water-block.png',
         'images/grass-block.png',
-        'images/rock.png',
+        'images/rock-1.png',
         'images/hole.png',
         'images/enemy-bug.png',
         'images/orc-racer.png',
@@ -192,7 +192,7 @@ var Engine = (function(global) {
         'images/gem-blue.png',
         'images/gem-green.png',
         'images/gem-orange.png',
-        'images/heart.png',
+        'images/heart-1.png',
         'images/key.png',
         'images/star.png'
     ]);
