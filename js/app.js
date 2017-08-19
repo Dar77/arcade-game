@@ -41,7 +41,6 @@ var Player = function(x, y, imageSprite) {
     this.collision = false;
     this.grab = false;
     this.fall = false;
-    this.meetObstacle = false;
     this.width = 40;
     this.height = 40;
     this.sprite = imageSprite; // image used must be (listed) and loaded in engine.js
