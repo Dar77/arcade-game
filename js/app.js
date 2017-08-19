@@ -41,6 +41,7 @@ var Player = function(x, y, imageSprite) {
     this.collision = false;
     this.grab = false;
     this.fall = false;
+    this.meetObstacle = false;
     this.width = 40;
     this.height = 40;
     this.sprite = imageSprite; // image used must be (listed) and loaded in engine.js
@@ -48,27 +49,33 @@ var Player = function(x, y, imageSprite) {
 
 Player.prototype.update = function(dt) {
 
-    var myPlayer;
     this.x = this.x;
     this.y = this.y;
+    this.checkEnemyCollision();
+    this.checkItemCollection();
+};
+
+Player.prototype.checkEnemyCollision = function() {
 
     for (i = 0; i < allEnemies.length; i++) { // detect collision with enemies
-        myPlayer = {x: this.x, y: this.y, width: this.width, height: this.height};
         var bug = {x: allEnemies[i].x, y: allEnemies[i].y, width: 70, height: 60};
-        var checkCollision = myPlayer.x < bug.x + bug.width && myPlayer.x + myPlayer.width > bug.x &&
-                             myPlayer.y < bug.y + bug.height && myPlayer.height + myPlayer.y > bug.y;
+        var checkCollision = this.x < bug.x + bug.width && this.x + this.width > bug.x &&
+                             this.y < bug.y + bug.height && this.height + this.y > bug.y;
         if (checkCollision) {
-            player.reset();
+            this.reset();
             this.collision = true; // change value of collision variable
             this.currentScore--; // reduce score by 1 after collision
             this.currentLives--; // reduce lives by 1 after a collision
         }
     }
+};
+
+Player.prototype.checkItemCollection = function() {
 
     for (i = 0; i < allItems.length; i++) { // detect collision with pick up items
         var item = {x: allItems[i].x, y: allItems[i].y, width: 50, height: 60};
-        var checkGrab = myPlayer.x < item.x + item.width && myPlayer.x + myPlayer.width > item.x &&
-                        myPlayer.y < item.y + item.height && myPlayer.height + myPlayer.y > item.y;
+        var checkGrab = this.x < item.x + item.width && this.x + this.width > item.x &&
+                        this.y < item.y + item.height && this.height + this.y > item.y;
         if (checkGrab) {
             allItems[i].x = 700; // grab pick up by moving its position off screen
             this.grab = true;
@@ -82,22 +89,22 @@ Player.prototype.render = function() {
 
     var msg;
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    player.score(); // update score
-    player.crossed(); // update road crosses
-    player.lives(); // update lives
+    this.score(); // update score
+    this.crossed(); // update road crosses
+    this.lives(); // update lives
     // this section contains the logic for screen messages
-   if (this.won === true && this.x === 303 && this.y === 485) { // if player has crossed road and is in reset position display message
+    if (this.won === true && this.x === 303 && this.y === 485) { // if player has crossed road and is in reset position display message
         msg = 'YOU MADE IT!';
-        player.screenMessage(msg, 300);
+        this.screenMessage(msg, 300);
     } else if (this.collision === true && this.x === 303 && this.y === 485) { // if player has been hit by enemy and is in reset position display message
         msg = 'GOT YOU!';
-        player.screenMessage(msg, 300);
+        this.screenMessage(msg, 300);
     } else if (this.grab === true && this.y <= 400 && this.y > -17) { // if player is on the road or higher
         msg = 'PICK UP!';
-        player.screenMessage(msg, 300);
+        this.screenMessage(msg, 300);
     } else if (this.fall === true && this.x === 303 && this.y === 485) { // if player has fallen down hole and is in reset position
         msg = 'WATCH FOR HOLES!';
-        player.screenMessage(msg, 300);
+        this.screenMessage(msg, 300);
     } else {
         this.won = false; // resets value of won, collision, grab and fall back to false after win, collision or grab
         this.collision = false;
@@ -110,75 +117,60 @@ Player.prototype.handleInput = function(input) {
 
     var stepX = 101; // player movement x axis
     var stepY = 85; // player movement y axis
+    var actionX = this.x;
+    var actionY = this.y;
 
     switch (input) { // handle keyboard input
 
-        case 'left':
-            this.x = this.x - stepX; // left arrow key
-            for (i = 0; i < allObstacles.length; i++) {
-                if (this.x < allObstacles[i].x + 30 && this.x > allObstacles[i].x - 30 && this.y === allObstacles[i].y) {  // conditions for walking into an obstacle
-                    this.x = this.x + stepX;
-                    if (allObstacles[i] instanceof Hole) { // if obstacle is a Hole
-                        this.fall = true;
-                        this.currentLives--; // if player falls into hole, take one life
-                        player.reset();
-                    }
-                } else if (this.x < -0) { // run this if character tries to move out of bounds
-                    this.x = -0;
-                }
+        case 'left': // left arrow key
+            this.x = this.x - stepX;
+            if (this.x < -0) { // run this if character tries to move out of bounds
+                this.x = -0;
             }
             break;
 
         case 'right': // right arrow key
             this.x = this.x + stepX;
-            for (i = 0; i < allObstacles.length; i++) {
-                if (this.x > allObstacles[i].x - 30 && this.x < allObstacles[i].x + 30 && this.y === allObstacles[i].y) {  // conditions for walking into an obstacle
-                    this.x = this.x - stepX;
-                    if (allObstacles[i] instanceof Hole) { // if obstacle is a Hole
-                        this.fall = true;
-                        this.currentLives--; // if player falls into hole, take one life
-                        player.reset();
-                    }
-                } else if (this.x > 606) { // run this if character tries to move out of bounds
+            if (this.x > 606) { // run this if character tries to move out of bounds
                     this.x = 606;
-                }
             }
             break;
 
         case 'down': // down arrow key
             this.y = this.y + stepY;
-            for (i = 0; i < allObstacles.length; i++) {
-                if (this.y > allObstacles[i].y - 30 && this.y < allObstacles[i].y + 30 && this.x === allObstacles[i].x) {  // conditions for walking into an obstacle
-                    this.y = this.y - stepY;
-                    if (allObstacles[i] instanceof Hole) { // if obstacle is a Hole
-                        this.fall = true;
-                        this.currentLives--; // if player falls into hole, take one life
-                        player.reset();
-                    }
-                } else if (this.y > 485) { // run this if character tries to move out of bounds
+                if (this.y > 485) { // run this if character tries to move out of bounds
                     this.y = 485;
-                }
             }
             break;
 
         case 'up': // up arrow key
             this.y = this.y - stepY;
-            for (i = 0; i < allObstacles.length; i++) {
-                if (this.y < allObstacles[i].y + 30 && this.y > allObstacles[i].y - 30 && this.x === allObstacles[i].x) {  // conditions for walking into an obstacle
-                    this.y = this.y + stepY;
-                    if (allObstacles[i] instanceof Hole) { // if obstacle is a Hole
-                        this.fall = true;
-                        this.currentLives--; // if player falls into hole, take one life
-                        player.reset();
-                    }
-                } else if (this.y <= 0) { // run this if character tries to move out of bounds
-                    this.currentScore++; // win - player has crossed the road - 1 point
-                    this.roadCross++; // road cross- increase crossed count
-                    this.won = true; // change value of won variable
-                    player.reset();
-                }
+            if (this.y <= 0) { // run this if character reaches the top of screen
+                this.currentScore++; // win - player has crossed the road - 1 point
+                this.roadCross++; // road cross- increase crossed count
+                this.won = true; // change value of won variable
+                this.reset();
             }
             break;
+    }
+    this.checkForObstacle(actionX, actionY);
+};
+
+Player.prototype.checkForObstacle = function(actionX, actionY) { // handles player meeting obstacles
+
+    for (i = 0; i < allObstacles.length; i++) { // detect collision with obstacle
+        var obstacle = {x: allObstacles[i].x, y: allObstacles[i].y, width: 30, height: 30};
+        var checkObstacle = this.x < obstacle.x + obstacle.width && this.x + this.width > obstacle.x &&
+                            this.y < obstacle.y + obstacle.height && this.height + this.y > obstacle.y;
+        if (checkObstacle) { // if player meets obstacle
+            this.x = actionX;
+            this.y = actionY;
+            if (allObstacles[i] instanceof Hole) { // if obstacle is a Hole
+                this.fall = true;
+                this.currentLives--; // if player falls into hole, take one life
+                this.reset();
+            }
+        }
     }
 };
 
@@ -190,7 +182,6 @@ Player.prototype.reset = function() { // reset x and y to start position if play
 
 Player.prototype.screenMessage = function(text, y) { // generate screen messages
 
-    var canvas = document.querySelector('canvas');
     ctx.font = '36pt impact';
     ctx.textAlign = 'center';
     ctx.fillStyle = "white";
@@ -202,11 +193,11 @@ Player.prototype.screenMessage = function(text, y) { // generate screen messages
 
 Player.prototype.score = function() { // generates current score
 
+    var scored;
+    var xAxis = 50;
     var align = 'left';
     var text = 'Score: ';
-    var xAxis = 50;
     var color = 'white';
-    var scored;
 
     if (this.currentScore >= 1 && this.currentScore < 50) {
         scored = this.currentScore;
@@ -225,37 +216,37 @@ Player.prototype.score = function() { // generates current score
         this.currentScore = 0; // prevents score counting down below 0
         scored = this.currentScore;
     }
-    player.gameData(text, scored, align, xAxis, color); // send score to game data
+    this.gameData(text, scored, align, xAxis, color); // send score to game data
 };
 
 Player.prototype.crossed = function() { // handles current number of times player has crossed road
 
     var cross;
-    align = 'center';
-    text = 'Crossed Road: ';
     xAxis = 350;
-    color = 'white';
+    align = 'center';
 
     if (this.roadCross >= 15 && this.currentScore <= 50) { // changes text color if target road cross is reached but other target hasn't been reached
         cross = this.roadCross;
         text = '15+ ';
         color = '#2196f3';
     } else {
+        text = 'Crossed Road: ';
+        color = 'white';
         cross = this.roadCross;
     }
-    player.gameData(text, cross, align, xAxis, color); // send road cross to game data
+    this.gameData(text, cross, align, xAxis, color); // send road cross to game data
 };
 
 Player.prototype.lives = function() { // handles players lives data and 'game over' screen
 
     var lives;
-    align = 'right';
-    text = 'Lives: ';
     xAxis = 654;
-    color = 'white';
+    align = 'right';
 
     if (this.currentLives >= 2) {
         lives = this.currentLives;
+        text = 'Lives: ';
+        color = 'white';
     } else if (this.currentLives === 1) { // changes text and text color if lives are reduced to 1 life
         lives = this.currentLives;
         text = 'Only: ';
@@ -268,7 +259,7 @@ Player.prototype.lives = function() { // handles players lives data and 'game ov
             document.location.reload();
         });
     }
-    player.gameData(text, lives, align, xAxis, color);
+    this.gameData(text, lives, align, xAxis, color);
 };
 
 Player.prototype.gameData = function(text, type, align, xAxis, color) { // prints score, road cross and lives data to canvas
@@ -310,34 +301,43 @@ Item.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-//Rock obstacle class
-var Rock = function(x, y) {
+//Obstacle class
+var Obstacle = function(x, y) {
 
     this.x = x;
     this.y = y;
-    this.sprite = 'images/rock-1.png';
 };
 
-Rock.prototype.update = function() {
+Obstacle.prototype.update = function() {
 
     this.x = this.x;
     this.y = this.y;
 };
 
-Rock.prototype.render = function() {
+Obstacle.prototype.render = function() {
 
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-//Hole sub class
+// Rock obstacle subclass
+var Rock = function(x, y) {
+
+    Obstacle.call(this, x, y);
+    this.sprite = 'images/rock-1.png';
+};
+
+Rock.prototype = Object.create(Obstacle.prototype);
+Rock.prototype.constructor = Obstacle;
+
+// Hole obstacle subclass
 var Hole = function(x, y) {
 
-    Rock.call(this, x, y);
+    Obstacle.call(this, x, y);
     this.sprite = 'images/hole.png';
 };
 
-Hole.prototype = Object.create(Rock.prototype);
-Hole.prototype.constructor = Rock;
+Hole.prototype = Object.create(Obstacle.prototype);
+Hole.prototype.constructor = Obstacle;
 
 
 
@@ -361,7 +361,7 @@ var star = new Item(5, 0, 200, 'images/star.png');
 var heart = new Item(0, 1, 200, 'images/heart-1.png');
 var allItems = [blueGem, greenGem, orangeGem, key, star, heart];
 
-// Rock objects, obstacle
+// Rock subclass objects, obstacle
 var rock1 = new Rock(202, 400); // parameters: x-position, y-position
 var rock2 = new Rock(404, 485);
 var rock3 = new Rock(303, 400);
