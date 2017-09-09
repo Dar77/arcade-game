@@ -3,7 +3,7 @@ ___
 
 # Classic Arcade Game Clone
 
-This game is loosley based on the classic 1981 [**video game**](https://en.wikipedia.org/wiki/Frogger), **Frogger**.  In which the players frog character negotiated roads filled with hostile vehicles to reach safety at the top of the screen.  This game is built using the HTML5 canvas element and canvas api.  This is a project from Udacity's **Frontend Nanodegree** program.
+This game is loosley based on the classic 1981 [**video game**](https://en.wikipedia.org/wiki/Frogger), **Frogger**.  In which the players frog character negotiated roads filled with hostile vehicles to reach safety at the top of the screen.  This game is built using the HTML5 canvas element and canvas api.  This is a project from Udacity's **Frontend Nanodegree** [program](https://www.udacity.com/course/front-end-web-developer-nanodegree--nd001).
 ___
 
 
@@ -26,7 +26,7 @@ ___
 
 ## Game Instructions
 
-Manoeuvre your player safely across the road and to the water at the top of the screen. Take care to avoid enemy bugs, holes and troll racers along the way! To win your score must reach 50 points and you must cross the road and reach the water 15 times or more. Good luck!
+Maneuverer your player safely across the road and to the water at the top of the screen. Take care to avoid enemy bugs, holes and troll racers along the way! To win your score must reach 50 points and you must cross the road and reach the water 15 times or more. Good luck!
 
 ___
 
@@ -42,10 +42,12 @@ ___
 The games code uses javascript **pseudo classical classes** and **subclasses** and makes use of object **prototype** to create a range of on screen instances of various game entities. These are rendered on the canvas within a gaming loop.
 
 I made use of **jquery** to create the transitions between the various game information screens, game over, win etc.
+
+Code follows Udacity's [style guide](http://udacity.github.io/frontend-nanodegree-styleguide/).
 ___
 
 
-## Project / Minimum Specification
+## Game / Minimum Specification
 - **Player cannot move off screen**
 - **Vehicles cross the screen**
 - **Vehicle and player collisions happen logically (not too early not too late)**
