@@ -9,8 +9,9 @@ ___
 
 ### Original
 
-![Original Frogger video game image](http://www.freegamesnews.com/en/wp-content/uploads/2007/12/frogger-300.png)
 See original game in action: [Frogger video](https://www.youtube.com/watch?v=l9fO-YuWPSk)
+
+![Original Frogger video game image](http://www.freegamesnews.com/en/wp-content/uploads/2007/12/frogger-300.png)
 
 ### My Game
 
